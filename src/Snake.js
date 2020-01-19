@@ -11,7 +11,7 @@ class Snake {
         {
           x: x,
           y: y
-        },
+        }
       ]
   }
 

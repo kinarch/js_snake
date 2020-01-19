@@ -21,8 +21,18 @@ class SnakeGame {
     canvas.height = Tiles.numberY * Tiles.size + this.menuSize
     canvas.width = Tiles.numberX * Tiles.size
 
+    //  game state
+    this.board = null
+    this.food = null
+    this.snake = null
+    this.interval = null
+    this.currentDirection = ""
+    this.nextDirection = ""
+    this.gameOver = false
+    this.score = 0
+
     // A CHANGER DE PLACE ??
-    addEventListener('keydown', (ev) => {
+    window.addEventListener('keydown', (ev) => {
       switch (ev.key) {
         case "ArrowLeft":
           if (this.currentDirection !== "right") this.nextDirection = "left"
@@ -48,9 +58,13 @@ class SnakeGame {
     this.init()
   }
 
+  /*
+    ====  ====  ====  ====
+    # Score and Level
+  */
 
   getLevel() {
-    return this.snake.getBody().slice(1).length - 1
+    return this.snake.getBody().length - 1
   }
 
   increaseScore() {
@@ -103,7 +117,7 @@ class SnakeGame {
     this.food = new Food(randomX, randomY)
   }
 
-  snakeIsInFoodTile(snakeHeadPos) {
+  snakeIsOnFoodTile(snakeHeadPos) {
     return (
       this.board.get(snakeHeadPos.x, snakeHeadPos.y) === Tiles.types.food
     )
@@ -123,27 +137,18 @@ class SnakeGame {
 
   init() {
 
-    this.stop()
+    if (this.interval) this.stop()
 
-    //  variables
-    this.nextDirection = "up"
-    this.currentDirection = ""
-    this.gameOver = false
-    this.score = 0
-
-    //  board
-    this.board = new Board(Tiles.numberX, Tiles.numberY)
-    this.board.load(Tiles.types.empty)
-
-    //  snake
     const midX = Math.floor(Tiles.numberX / 2)
     const midY = Math.floor(Tiles.numberY / 2)
+
+    this.nextDirection = "up"
+    this.gameOver = false
+    this.score = 0
+    this.board = new Board(Tiles.numberX, Tiles.numberY)
+    this.board.load(Tiles.types.empty)
     this.snake = new Snake(midX, midY)
-
-    //  food
     this.generateFood()
-
-    //  game tic
     this.update()
     this.draw()
     this.tic()
@@ -175,9 +180,6 @@ class SnakeGame {
         break;
     }
 
-    //  snake add new pos
-    this.snake.addPos(nextHeadPosition)
-
     // gameover : next head position is out of border or in snake body 
     if (this.snakeIsOutOfBoard(nextHeadPosition) || this.snakeIsInHisBodyTile(nextHeadPosition)) {
       this.gameOver = true
@@ -185,7 +187,7 @@ class SnakeGame {
     }
 
     //  check snake reach food
-    if (this.snakeIsInFoodTile(nextHeadPosition)) {
+    if (this.snakeIsOnFoodTile(nextHeadPosition)) {
       //  food : keep the last position and generate new food
       this.generateFood()
       this.increaseScore()
@@ -193,6 +195,9 @@ class SnakeGame {
       //  no food : remove the last position
       this.snake.removeLastPos()
     }
+
+    //  snake add new pos
+    this.snake.addPos(nextHeadPosition)
 
     //  reload the board and add game object
     this.board.load(Tiles.types.empty)

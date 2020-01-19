@@ -3,10 +3,11 @@
 }
 
 body {
+  font-family: Arial;
   text-align: center;
 }
 
 canvas {
-  border: 2 outset black;
+  border: 10px outset black;
   background: silver;
 }
