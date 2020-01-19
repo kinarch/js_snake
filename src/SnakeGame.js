@@ -77,18 +77,18 @@ class SnakeGame {
     # Game over
   */
 
-  snakeIsOutOfBoard(snakeHeadPos) {
+  snakeIsOutOfBoard(nextSnakePos) {
     return (
-      snakeHeadPos.x >= Tiles.numberX ||
-      snakeHeadPos.x < 0 ||
-      snakeHeadPos.y >= Tiles.numberY ||
-      snakeHeadPos.y < 0
+      nextSnakePos.x >= Tiles.numberX ||
+      nextSnakePos.x < 0 ||
+      nextSnakePos.y >= Tiles.numberY ||
+      nextSnakePos.y < 0
     )
   }
 
-  snakeIsInHisBodyTile(snakeHeadPos) {
+  snakeIsInHisBodyTile(nextSnakePos) {
     return (
-      this.board.get(snakeHeadPos.x, snakeHeadPos.y) === Tiles.types.snake
+      this.board.get(nextSnakePos.x, nextSnakePos.y) === Tiles.types.snake
     )
   }
 
@@ -125,14 +125,14 @@ class SnakeGame {
 
   /*
     ====  ====  ====  ====
-    # Game Life Cycle
+    # Game
 
-    ## init : init the game variables
-    ## update: update the data in the board
-    ## draw: draw the rect game object from the board
-    ## tic: loop the update & the draw
-    ## pause: pause or resume the game
-    ## stop: stop the game
+    ## init : initialise le jeu
+    ## update: la logique du jeu
+    ## draw: le rendu du jeu
+    ## tic: la boucle update + draw
+    ## pause: arrête ou relance le jeu
+    ## stop: arrête le jeu
   */
 
   init() {
@@ -156,15 +156,18 @@ class SnakeGame {
 
   update() {
 
+    //  je récupère la position de la tête du serpent
     const snakeHead = this.snake.getHead()
     const nextHeadPosition = {
       x: snakeHead.x,
       y: snakeHead.y
     }
 
+    //  je récupère la direction
     this.currentDirection = this.nextDirection
 
-    //  move the next head position
+    //  je teste la direction
+    //  je deplace la position de la tête du serpent
     switch (this.currentDirection) {
       case "left":
         nextHeadPosition.x--
@@ -180,26 +183,29 @@ class SnakeGame {
         break;
     }
 
-    // gameover : next head position is out of border or in snake body 
+    //  gameover :
+    //  je teste la nouvelle position de la tête du serpent sur les bords et sur son corps
     if (this.snakeIsOutOfBoard(nextHeadPosition) || this.snakeIsInHisBodyTile(nextHeadPosition)) {
       this.gameOver = true
       return
     }
 
-    //  check snake reach food
+    //  je teste la nouvelle position de la tête du serpent avec la position de la nourriture
+    //  si nourriture, le seprent garde sa dernière position et grandit
+    //  je génère une nouvelle nourriture
+    //  sinon le serpent perds sa dernière position et ne grandit pas
     if (this.snakeIsOnFoodTile(nextHeadPosition)) {
-      //  food : keep the last position and generate new food
       this.generateFood()
       this.increaseScore()
     } else {
-      //  no food : remove the last position
       this.snake.removeLastPos()
     }
 
-    //  snake add new pos
+    //  j'ajoute la nouvelle position de la tête du serpent au corps du serpent
     this.snake.addPos(nextHeadPosition)
 
-    //  reload the board and add game object
+    //  le board recharge les cases
+    //  j'ajoute les objects du jeux (serpent et nourriture) au board
     this.board.load(Tiles.types.empty)
     this.addGameObjectsInBoard()
 
@@ -220,18 +226,20 @@ class SnakeGame {
       ctx.fillText('GAME OVER', width / 2, height / 2 + menuSize / 2);
       ctx.fillStyle = "#fff"
     } else {
+      //  j'efface le jeu
+      //  je dessine le board
       ctx.clearRect(0, 0, width, height);
       board.getMatrix().forEach((row, x) => row.forEach((item, y) => {
 
         switch (item) {
           case Tiles.types.empty:
-            ctx.fillStyle = "#000"
+            ctx.fillStyle = Tiles.color.empty
             break
           case Tiles.types.snake:
-            ctx.fillStyle = "#F00"
+            ctx.fillStyle = Tiles.color.snake
             break
           case Tiles.types.food:
-            ctx.fillStyle = "#0FF"
+            ctx.fillStyle = Tiles.color.food
             break
         }
 

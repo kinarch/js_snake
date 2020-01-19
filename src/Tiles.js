@@ -7,5 +7,10 @@ const Tiles = {
     empty: 0,
     snake: 1,
     food: 2
+  },
+  color : {
+    empty: "#000",
+    snake: "#F00",
+    food: "#0FF"
   }
 }
