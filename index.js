@@ -1,0 +1,1 @@
+new SnakeGame(document.getElementById("canvas"))
