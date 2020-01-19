@@ -156,7 +156,7 @@ class SnakeGame {
       x: snakeHead.x,
       y: snakeHead.y
     }
-    
+
     this.currentDirection = this.nextDirection
 
     //  move the next head position
@@ -177,7 +177,7 @@ class SnakeGame {
 
     //  snake add new pos
     this.snake.addPos(nextHeadPosition)
-    
+
     // gameover : next head position is out of border or in snake body 
     if (this.snakeIsOutOfBoard(nextHeadPosition) || this.snakeIsInHisBodyTile(nextHeadPosition)) {
       this.gameOver = true
@@ -236,9 +236,8 @@ class SnakeGame {
           Tiles.size,
           Tiles.size
         )
-      }
-      )
-      )
+      }))
+      ctx.textAlign = "left";
       ctx.fillStyle = "#000"
       ctx.fillText('Level ' + this.getLevel(), 10, 20)
       ctx.fillText('Score ' + score, 10, 40)
